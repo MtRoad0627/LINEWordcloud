@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <link href="/static/style.css" rel="stylesheet"> <!-- cssファイルを読み込む -->
+    <title>LINEトーク履歴ワードクラウド</title>
+    <!-- ここにスタイルシートのリンクまたはスタイルを追加 -->
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><span class="highlight">LINE</span> トーク履歴ワードクラウド</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- ページの説明を追加 -->
+        <p>このアプリケーションでは、LINEのトーク履歴の.txtファイルをアップロードして、そのトークのワードクラウドを作ることができます。</p>
+        
+        <!-- フォームを中央寄せにするためのdiv -->
+        <div class="form-container">
+            <form action="/analyze" method="post" enctype="multipart/form-data">
+                <input type="file" name="upload" accept=".txt">
+                <input type="submit" value="分析開始">
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,125 @@
+/* ボディ全体のスタイルを設定 */
+body {
+    font-family: 'Arial', sans-serif; /* フォントファミリーを指定 */
+    background-color: #f4f4f4; /* 背景色を指定 */
+    margin: 0; /* 外側の余白をなくす */
+    padding: 0; /* 内側の余白をなくす */
+}
+
+/* コンテナのスタイルを設定 */
+.container {
+    width: 80%; /* 幅を80%に設定 */
+    margin: auto; /* 左右のマージンを自動で均等に設定 */
+    overflow: hidden; /* コンテンツがはみ出さないようにする */
+}
+
+/* ヘッダーのスタイルを設定 */
+header {
+    background: #00B900; /* 背景色を指定 */
+    color: white; /* 文字色を白に設定 */
+    padding-top: 30px; /* 上部のパディングを設定 */
+    min-height: 70px; /* 最小の高さを設定 */
+}
+
+/* ヘッダー内のリンクのスタイルを設定 */
+header a {
+    color: #ffffff; /* 文字色を白に設定 */
+    text-decoration: none; /* テキストの下線をなくす */
+    text-transform: uppercase; /* 文字を大文字にする */
+    font-size: 16px; /* フォントサイズを指定 */
+}
+
+/* ナビゲーションリストのスタイルを設定 */
+header ul {
+    list-style: none; /* リストスタイルをなくす */
+    padding: 0; /* パディングをなくす */
+}
+
+/* ナビゲーションリストアイテムのスタイルを設定 */
+header ul li {
+    float: left; /* 左に浮かせる */
+    display: inline; /* インライン表示にする */
+    padding: 0 20px; /* 左右のパディングを設定 */
+}
+
+/* ブランディングのスタイルを設定 */
+header #branding {
+    float: left; /* 左に浮かせる */
+}
+
+/* ブランディングの見出しのスタイルを設定 */
+header #branding h1 {
+    margin: 0; /* 外側の余白をなくす */
+}
+
+/* ナビゲーションのスタイルを設定 */
+header nav {
+    float: right; /* 右に浮かせる */
+    margin-top: 10px; /* 上部のマージンを設定 */
+}
+
+/* ハイライトと現在のページのリンクのスタイルを設定 */
+header .highlight, header .current a {
+    color: #ffffff; /* 文字色を指定 */
+    font-weight: bold; /* フォントを太字にする */
+}
+
+/* リンクのホバースタイルを設定 */
+header a:hover {
+    color: #ffffff; /* ホバー時の文字色を白に設定 */
+    font-weight: bold; /* ホバー時のフォントを太字にする */
+}
+
+/* フォームのスタイルを設定 */
+form {
+    margin-top: 40px; /* 上部のマージンを設定 */
+}
+
+/* ファイル入力フィールドのスタイルを設定 */
+input[type="file"] {
+    margin-bottom: 10px; /* 下部のマージンを設定 */
+}
+
+/* 送信ボタンのスタイルを設定 */
+input[type="submit"] {
+    background: #e8491d; /* 背景色を指定 */
+    color: white; /* 文字色を白に設定 */
+    border: none; /* ボーダーをなくす */
+    padding: 10px 20px; /* パディングを設定 */
+    border-radius: 5px; /* 角を丸くする */
+    cursor: pointer; /* カーソルをポインターにする */
+}
+
+/* 送信ボタンのホバースタイルを設定 */
+input[type="submit"]:hover {
+    background: #333; /* ホバー時の背景色を暗くする */
+}
+
+/* ページの説明文のスタイルを設定 */
+.container p {
+    text-align: center; /* テキストを中央寄せにする */
+    margin-bottom: 20px; /* 下部のマージンを設定 */
+}
+
+/* フォームコンテナのスタイルを設定 */
+.form-container {
+    text-align: center; /* テキストを中央寄せにする */
+}
+
+/* フォームのスタイルを設定 */
+form {
+    display: inline-block; /* フォームをインラインブロック要素にする */
+    margin: auto; /* マージンを自動で設定 */
+}
+
+/* ファイル入力フィールドのスタイルを設定 */
+input[type="file"] {
+    display: block; /* ブロック要素にする */
+    margin: 10px auto; /* 上下のマージンを設定し、左右を自動で中央寄せにする */
+}
+
+/* 送信ボタンのスタイルを設定 */
+input[type="submit"] {
+    display: block; /* ブロック要素にする */
+    margin: 20px auto; /* 上下のマージンを設定し、左右を自動で中央寄せにする */
+}
