@@ -59,36 +59,36 @@ def server_static(filepath):
 def analyze():
     upload = request.files.get('upload')
     if upload is not None:
-        # 一時ファイルとして保存
         file_path = "temp.txt"
         upload.save(file_path)
-        # ファイルを読み込み、メッセージを抽出
         with open(file_path, 'r', encoding='utf-8') as file:
             lines = file.readlines()
             current_speaker = None
             for line in lines:
-                # 発言者を識別
                 speaker_match = re.search(r'\d{2}:\d{2}\t(.+?)\t', line)
                 if speaker_match:
                     current_speaker = speaker_match.group(1)
-                    # 新しい発言者を辞書に追加
                     if current_speaker not in messages:
                         messages[current_speaker] = []
-                # メッセージの内容を抽出
                 message_content = re.search(r'\d{2}:\d{2}\t.+?\t(.+)', line)
                 if message_content and current_speaker:
-                    # メッセージを辞書に追加
                     messages[current_speaker].append(message_content.group(1))
-        # 一時ファイルを削除
         os.remove(file_path)
 
-        # 全てのメッセージを一つの文字列に結合
-        all_messages = ' '.join([msg for msgs in messages.values() for msg in msgs])
-        # ワードクラウドを生成
-        img_data_url = generate_wordcloud(all_messages)
+        # HTMLのヘッダーを生成
+        html_result = '<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><title>Word Clouds</title></head><body>'
+        
+        # 各話者のワードクラウドを生成し、HTMLで表示するためのデータを準備
+        for speaker, msgs in messages.items():
+            speaker_messages = ' '.join(msgs)
+            img_data_url = generate_wordcloud(speaker_messages)
+            html_result += f'<h2>{speaker}</h2><img src="{img_data_url}" alt="Word Cloud">'
+        
+        # HTMLのフッターを追加
+        html_result += '</body></html>'
 
         # 結果を表示
-        return template('<img src="{{img_data_url}}" alt="Word Cloud">', img_data_url=img_data_url)
+        return html_result
 
     else:
         return "ファイルが見つかりません。"
