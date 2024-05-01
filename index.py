@@ -9,9 +9,6 @@ import base64
 import re
 import os
 
-# 発言者とメッセージを格納する辞書
-messages = {}
-
 # 不要な単語のリスト
 stopwords = set(STOPWORDS)
 stopwords.update(['スタンプ', '写真', '動画', '通話時間', 'unsent a message', '不在着信', '通話をキャンセルしました', '通話に応答がありませんでした', 'https', 'グループ通話が開始されました', 'emoji'])
@@ -57,6 +54,11 @@ def server_static(filepath):
 
 @route('/analyze', method='POST')
 def analyze():
+    
+    #発言者とメッセージを格納する辞書(分析するごとにここでmessages辞書をリセット)
+    global messages
+    messages = {}
+
     upload = request.files.get('upload')
     if upload is not None:
         file_path = "temp.txt"

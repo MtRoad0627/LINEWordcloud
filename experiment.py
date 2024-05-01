@@ -9,8 +9,8 @@ import base64
 import re
 import os
 
-# 発言者とメッセージを格納する辞書
-messages = {}
+# # 発言者とメッセージを格納する辞書
+# messages = {}
 
 # 不要な単語のリスト
 stopwords = set(STOPWORDS)
@@ -57,6 +57,11 @@ def server_static(filepath):
 
 @route('/analyze', method='POST')
 def analyze():
+    
+    # ここでmessages辞書をリセット
+    global messages
+    messages = {}
+
     upload = request.files.get('upload')
     if upload is not None:
         file_path = "temp.txt"
