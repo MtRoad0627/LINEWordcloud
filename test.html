@@ -15,12 +15,24 @@
 
     <div class="container">
         <!-- ページの説明を追加 -->
-        <p>このアプリケーションでは、LINEのトーク履歴の.txtファイルをアップロードして、そのトークのワードクラウドを作ることができます。</p>
+        <p>このサイトでは、LINEのトーク履歴の.txtファイルをアップロードして、そのトークのワードクラウドを作ることができます。</p>
         
+        <!-- ファイルアップロード方法を説明する画像を追加するセクション -->
+        <section id="upload-instructions" style="text-align: center; margin: auto; display: block;">
+            <h2>ファイルのアップロード方法</h2>
+            <p>以下の手順に従って、LINEのトーク履歴の.txtファイルを出力してください。</p>
+            <img src="/static/explanation.jpg" alt="ファイルのアップロード方法を示す画像">
+        </section>
+
+        <section style="text-align: center; margin: auto; display: block;">
+        <h3>出力できたら以下のボタンから.txtファイルを選択して分析してみてください！</h3>
+        </section>
+
         <!-- フォームを中央寄せにするためのdiv -->
         <div class="form-container">
             <form action="/analyze" method="post" enctype="multipart/form-data">
                 <input type="file" name="upload" accept=".txt">
+                <label><input type="checkbox" name="overall" value="true"> 全体のワードクラウドを作成</label>
                 <input type="submit" value="分析開始">
             </form>
         </div>
