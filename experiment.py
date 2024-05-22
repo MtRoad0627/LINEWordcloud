@@ -1,7 +1,4 @@
-from bottle import route, run, template, static_file, url, HTTPResponse
-from bottle import get, post, request, response, error
-from bottle import hook, route, response
-from textblob import TextBlob
+from bottle import route, run, template, static_file, url, request
 from wordcloud import WordCloud, STOPWORDS
 from io import BytesIO
 import matplotlib.pyplot as plt
@@ -17,39 +14,49 @@ stopwords.update(['スタンプ',
                   '写真', 
                   '動画', 
                   '通話時間', 
-                  'unsent a message', 
+                  'メッセージ',
+                  '取り消し', 
                   '不在着信', 
-                  '通話をキャンセルしました', 
-                  '通話に応答がありませんでした', 
-                  'https', 
-                  'グループ通話が開始されました', 
+                  'キャンセル', 
+                  '応答', 
+                  'https',  
                   'グループ',
                   'アルバム',
                   'NULL',
                   'ファイル',
+                  '通話',
+                  '開始',
                   'emoji'])
 
 # MeCabを使ったトークン化の関数
 def mecab_tokenizer(text):
+    # テキストの正規化と前処理
     replaced_text = unicodedata.normalize("NFKC", text)
-    replaced_text = replaced_text.upper()
+    # replaced_text = replaced_text.upper()
     replaced_text = re.sub(r'[【】 () （） 『』　「」]', '', replaced_text)  #【】 () 「」　『』の除去
     replaced_text = re.sub(r'[\[\［］\]]', ' ', replaced_text)   # ［］の除去
     replaced_text = re.sub(r'[@＠]\w+', '', replaced_text)  # メンションの除去
     replaced_text = re.sub(r'\d+\.*\d*', '', replaced_text) # 数字を除去
 
-    mecab = MeCab.Tagger("-Owakati")
-    parsed_text = mecab.parse(replaced_text)
+    # MeCabの初期化
+    mecab = MeCab.Tagger()
+    mecab.parse('')  # バグ回避のためのダミー呼び出し
+
+    # トークン化とフィルタリング
+    node = mecab.parseToNode(replaced_text)
+    token_list = []
+
+    # デバッグ用出力
     
-    # 名詞、動詞、形容詞のみをフィルタリングするための再解析
-    parsed_lines = mecab.parse(replaced_text).split()
-    surfaces = [token for token in parsed_lines if token]
 
-    # 名詞、動詞、形容詞に絞り込み
-    kana_re = re.compile("^[ぁ-ゖ]+$")
-    token_list = [t for t in surfaces if not kana_re.match(t)]
+    while node:
+        if node.surface:
+            word_type = node.feature.split(',')[0]
+            if word_type in ['名詞', '動詞', '形容詞', '感動詞']:
+                token_list.append(node.surface)
+        node = node.next
 
-    # 各トークンを少しスペースを空けて（' '）結合
+    # トークンの結合と返却
     return ' '.join(token_list)
 
 # ワードクラウドを生成する関数
@@ -59,6 +66,10 @@ def generate_wordcloud(text):
     
     # トークン化
     tokenized_text = mecab_tokenizer(text)
+
+    # 重複する単語を除去
+    # token_set = set(tokenized_text.split())
+    # filtered_text = ' '.join(token_set)
 
     # ワードクラウドの設定
     wordcloud = WordCloud(
@@ -90,6 +101,7 @@ def upload():
     return '''
         <form action="/analyze" method="post" enctype="multipart/form-data">
             <input type="file" name="upload" accept=".txt">
+            <input type="checkbox" name="overall" value="true"> 全体のワードクラウドを作成
             <input type="submit" value="分析開始">
         </form>
     '''
@@ -105,6 +117,7 @@ def server_static(filepath):
 @route('/analyze', method='POST')
 def analyze():
     upload = request.files.get('upload')
+    overall = request.forms.get('overall')
     if upload is not None:
         file_path = "temp.txt"
         upload.save(file_path)
@@ -112,7 +125,7 @@ def analyze():
             lines = file.readlines()
             current_speaker = None
             messages = {}
-            for line in lines:
+            for line in lines: # 1行ずつ読み込む
                 speaker_match = re.search(r'\d{2}:\d{2}\t(.+?)\t', line)
                 if speaker_match:
                     current_speaker = speaker_match.group(1)
@@ -123,19 +136,20 @@ def analyze():
                     messages[current_speaker].append(message_content.group(1))
         os.remove(file_path)
 
-        # HTMLのヘッダーを生成
-        html_result = '<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><title>Word Clouds</title></head><body>'
-        
-        # 各話者のワードクラウドを生成し、HTMLで表示するためのデータを準備
-        for speaker, msgs in messages.items():
-            speaker_messages = ' '.join(msgs)
-            img_data_url = generate_wordcloud(speaker_messages)
-            html_result += f'<h2>{speaker}</h2><img src="{img_data_url}" alt="Word Cloud">'
-        
-        # HTMLのフッターを追加
-        html_result += '</body></html>'
+        if overall:
+            # 全体のワードクラウドを生成
+            all_messages = ' '.join([' '.join(msgs) for msgs in messages.values()])
+            img_data_url = generate_wordcloud(all_messages)
+            html_result = f'<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><title>Word Cloud</title></head><body><h2>全体のワードクラウド</h2><img src="{img_data_url}" alt="Word Cloud"></body></html>'
+        else:
+            # 個人ごとのワードクラウドを生成
+            html_result = '<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><title>Word Clouds</title></head><body>'
+            for speaker, msgs in messages.items():
+                speaker_messages = ' '.join(msgs)
+                img_data_url = generate_wordcloud(speaker_messages)
+                html_result += f'<h2>{speaker}</h2><img src="{img_data_url}" alt="Word Cloud">'
+            html_result += '</body></html>'
 
-        # 結果を表示
         return html_result
 
     else:
