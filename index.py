@@ -13,10 +13,10 @@ stopwords = set(STOPWORDS)
 stopwords.update(['スタンプ', 
                   '写真', 
                   '動画', 
-                  '通話時間', 
                   'メッセージ',
                   '取り消し', 
-                  '不在着信', 
+                  '不在',
+                  '着信', 
                   'キャンセル', 
                   '応答', 
                   'https',  
@@ -46,13 +46,10 @@ def mecab_tokenizer(text):
     node = mecab.parseToNode(replaced_text)
     token_list = []
 
-    # デバッグ用出力
-    
-
     while node:
         if node.surface:
             word_type = node.feature.split(',')[0]
-            if word_type in ['名詞', '動詞', '形容詞', '感動詞']:
+            if word_type in ['名詞', '動詞', '形容詞', '形容動詞', '感動詞']:
                 token_list.append(node.surface)
         node = node.next
 
@@ -62,7 +59,7 @@ def mecab_tokenizer(text):
 # ワードクラウドを生成する関数
 def generate_wordcloud(text):
     # 日本語フォントの指定
-    font_path = '/Users/ryoy/Documents/UT/3S/プログラミング応用/Ⅰ/textAnalysisApp/MoBoGa/BMbG90.ttf'
+    font_path = './static/BMbG90.ttf'
     
     # トークン化
     tokenized_text = mecab_tokenizer(text)
