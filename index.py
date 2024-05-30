@@ -46,7 +46,7 @@ def mecab_tokenizer(text):
     node = mecab.parseToNode(replaced_text)
     token_list = []
 
-    while node:
+    while node: # トークンの終わりまでループ
         if node.surface:
             word_type = node.feature.split(',')[0]
             if word_type in ['名詞', '動詞', '形容詞', '形容動詞', '感動詞']:
@@ -58,15 +58,12 @@ def mecab_tokenizer(text):
 
 # ワードクラウドを生成する関数
 def generate_wordcloud(text):
+
     # 日本語フォントの指定
     font_path = './static/BMbG90.ttf'
     
     # トークン化
     tokenized_text = mecab_tokenizer(text)
-
-    # 重複する単語を除去
-    # token_set = set(tokenized_text.split())
-    # filtered_text = ' '.join(token_set)
 
     # ワードクラウドの設定
     wordcloud = WordCloud(
@@ -111,7 +108,7 @@ def html_index():
 def server_static(filepath): 
     return static_file(filepath, root='./static')
 
-@route('/analyze', method='POST')
+@route('/analyze', method='POST') #分析結果のページ
 def analyze():
     upload = request.files.get('upload')
     overall = request.forms.get('overall')
@@ -123,12 +120,12 @@ def analyze():
             current_speaker = None
             messages = {}
             for line in lines: # 1行ずつ読み込む
-                speaker_match = re.search(r'\d{2}:\d{2}\t(.+?)\t', line)
+                speaker_match = re.search(r'\d{2}:\d{2}\t(.+?)\t', line) # 発言者の抽出
                 if speaker_match:
                     current_speaker = speaker_match.group(1)
-                    if current_speaker not in messages:
+                    if current_speaker not in messages: # 発言者ごとにメッセージリストを作成
                         messages[current_speaker] = []
-                message_content = re.search(r'\d{2}:\d{2}\t.+?\t(.+)', line)
+                message_content = re.search(r'\d{2}:\d{2}\t.+?\t(.+)', line) # メッセージの抽出
                 if message_content and current_speaker:
                     messages[current_speaker].append(message_content.group(1))
         os.remove(file_path)
